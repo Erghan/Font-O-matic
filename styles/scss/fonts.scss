@@ -1,3 +1,16 @@
+// For character replacement
+@function str-replace($string, $search, $replace: '') {
+  
+  $index: str-index($string, $search);
+  
+  @if $index {
+    
+    @return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+  }
+  
+  @return $string;
+}
+
 // List of variations :
 $thin: "Thin", 100, normal;
 $thinItalic: "ThinItalic", 100, italic;
@@ -20,18 +33,26 @@ $blackItalic: "BlackItalic", 900, italic;
 $variable: "VariableFont_wght", 100 900, normal;
 $variableItalic: "Italic-VariableFont_wght", 100 900, italic;
 
-// Mixin Font'O'matic
+// Mixin Font-O-matic
 @mixin font-face($fontName, $fontType...) {
+  
+  $folderName: str-replace($fontName, ' ', '_');
+  $fileName: str-replace($fontName, ' ');
+  
   @each $i in $fontType {
+    
     @font-face {
       font-family: $fontName;
-      src: url("../fonts/#{$fontName}/#{$fontName}-#{nth($i, 1)}.ttf")
+      src: url("../fonts/#{$folderName}/#{$fileName}-#{nth($i, 1)}.ttf")
         format("truetype");
       font-weight: nth($i, 2);
       font-style: nth($i, 3);
     }
   }
 }
+
+// Declare your fonts
+// Example: @include font-face("Roboto", $regular, $italic, $bold);
 
 // Declare your fonts below
 // Example: @include font-face("Roboto", $regular, $italic, $bold);
