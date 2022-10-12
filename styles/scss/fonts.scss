@@ -1,55 +1,145 @@
+@use "sass:map";
+
 // For character replacement
-@function str-replace($string, $search, $replace: '') {
-  
+@function str-replace($string, $search, $replace: "") {
   $index: str-index($string, $search);
-  
   @if $index {
-    
-    @return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+    @return str-slice($string, 1, $index - 1) + $replace +
+      str-replace(
+        str-slice($string, $index + str-length($search)),
+        $search,
+        $replace
+      );
   }
-  
   @return $string;
 }
 
 // List of variations :
-$thin: "Thin", 100, normal;
-$thinItalic: "ThinItalic", 100, italic;
-$extraLight: "ExtraLight", 200, normal;
-$extraLightItalic: "ExtraLightItalic", 200, italic;
-$light: "Light", 300, normal;
-$lightItalic: "LightItalic", 300, italic;
-$regular: "Regular", 400, normal;
-$italic: "Italic", 400, italic;
-$medium: "Medium", 500, normal;
-$mediumItalic: "MediumItalic", 500, italic;
-$semiBold: "SemiBold", 600, normal;
-$semiBoldItalic: "SemiBoldItalic", 600, italic;
-$bold: "Bold", 700, normal;
-$boldItalic: "BoldItalic", 700, italic;
-$extraBold: "ExtraBold", 800, normal;
-$extraBoldItalic: "ExtraBoldItalic", 800, italic;
-$black: "Black", 900, normal;
-$blackItalic: "BlackItalic", 900, italic;
-$variable: "VariableFont_wght", 100 900, normal;
-$variableItalic: "Italic-VariableFont_wght", 100 900, italic;
+$thin: (
+  "name": "Thin",
+  "weight": 100,
+  "style": normal,
+);
+$thinItalic: (
+  "name": "ThinItalic",
+  "weight": 100,
+  "style": italic,
+);
+$extraLight: (
+  "name": "ExtraLight",
+  "weight": 200,
+  "style": normal,
+);
+$extraLightItalic: (
+  "name": "ExtraLightItalic",
+  "weight": 200,
+  "style": italic,
+);
+$light: (
+  "name": "Light",
+  "weight": 300,
+  "style": normal,
+);
+$lightItalic: (
+  "name": "LightItalic",
+  "weight": 300,
+  "style": italic,
+);
+$regular: (
+  "name": "Regular",
+  "weight": 400,
+  "style": normal,
+);
+$italic: (
+  "name": "Italic",
+  "weight": 400,
+  "style": italic,
+);
+$medium: (
+  "name": "Medium",
+  "weight": 500,
+  "style": normal,
+);
+$mediumItalic: (
+  "name": "MediumItalic",
+  "weight": 500,
+  "style": italic,
+);
+$semiBold: (
+  "name": "SemiBold",
+  "weight": 600,
+  "style": normal,
+);
+$semiBoldItalic: (
+  "name": "SemiBoldItalic",
+  "weight": 600,
+  "style": italic,
+);
+$bold: (
+  "name": "Bold",
+  "weight": 700,
+  "style": normal,
+);
+$boldItalic: (
+  "name": "BoldItalic",
+  "weight": 700,
+  "style": italic,
+);
+$extraBold: (
+  "name": "ExtraBold",
+  "weight": 800,
+  "style": normal,
+);
+$extraBoldItalic: (
+  "name": "ExtraBoldItalic",
+  "weight": 800,
+  "style": italic,
+);
+$black: (
+  "name": "Black",
+  "weight": 900,
+  "style": normal,
+);
+$blackItalic: (
+  "name": "BlackItalic",
+  "weight": 900,
+  "style": italic,
+);
+
+$variable: (
+  "name": "VariableFont_wght",
+  "weight": 100 900,
+  "style": normal,
+);
+$variableItalic: (
+  "name": "Italic-VariableFont_wght",
+  "weight": 100 900,
+  "style": italic,
+);
 
 // Mixin Font-O-matic
 @mixin font-face($fontName, $fontType...) {
-  
-  $folderName: str-replace($fontName, ' ', '_');
-  $fileName: str-replace($fontName, ' ');
-  
+  $folderName: str-replace($fontName, " ", "_");
+  $fileName: str-replace($fontName, " ");
+
   @each $i in $fontType {
+    $fontTypeName: map-get($i, "name");
+    $fontTypeWeight: map-get($i, "weight");
+    $fontTypeStyle: map-get($i, "style");
     
+    $fontPath: "../fonts/#{$folderName}/#{$fileName}-#{$fontTypeName}.ttf";
+
     @font-face {
       font-family: $fontName;
-      src: url("../fonts/#{$folderName}/#{$fileName}-#{nth($i, 1)}.ttf")
-        format("truetype");
-      font-weight: nth($i, 2);
-      font-style: nth($i, 3);
+      src: url($fontPath) format("truetype");
+      font-weight: $fontTypeWeight;
+      font-style: $fontTypeStyle;
     }
   }
 }
 
 // Declare your fonts below
-// Example: @include font-face("Roboto", $regular, $italic, $bold);
+
+// Example:
+// @include font-face("Roboto", $regular, $italic, $bold);
+
